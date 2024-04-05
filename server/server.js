@@ -1,10 +1,12 @@
 import express from 'express';
 import userRoutes from './routes/user.route.js'; 
 import { errorHandler} from './libraries/middleware.js' ;
+import authRouter from './routes/auth.route.js' ;
 const app = express();
 app.use(express.json());
-app.use('/users', userRoutes);
-const PORT = 8000;
+app. use('/api/v1/auth' , authRouter);
+app.use('/api/v1/users', userRoutes);
+const PORT = 80;
 
 async function startServer() {
   try {
