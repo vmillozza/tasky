@@ -24,6 +24,7 @@ export default function SignUp() {
   } = useForm();
   const doSubmit = async values => {
     try {
+      //alert(API_BASE_URL);
       const res = await fetch(`${API_BASE_URL}/auth/signup`, { // Rimossi gli spazi intorno a ${API_BASE_URL}
         method: 'POST',
         headers: {
@@ -97,7 +98,7 @@ export default function SignUp() {
       </form>
       <Flex gap="2" mt="5">
         <Text>Have an account?</Text>
-        <Link to="/signin">
+        <Link to="/api/v1/signin">
           <Text as="span" color="blue.400">
             Sign in
           </Text>
