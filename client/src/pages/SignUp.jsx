@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 //import toast from 'react-hot-toast' ;
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { API_BASE_URL } from '../util.js';
 import {
   FormControl,
   Input,
@@ -22,8 +23,24 @@ export default function SignUp() {
     formState: { errors, isSubmitting },
   } = useForm();
   const doSubmit = async values => {
-    //alert('Sign Up Successful . You are now logged in');
-    toast.success('Sign Up Successful. You are now logged in');
+    try {
+      const res = await fetch(`${API_BASE_URL}/auth/signup`, { // Rimossi gli spazi intorno a ${API_BASE_URL}
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json', // Rimosso lo spazio dopo 'application/json'
+        },
+        body: JSON.stringify(values),
+      });
+      const data = await res.json();
+
+      if (res.status === 200) {
+        toast.success('Sign Up Successful. You are now logged in'); // Corretta la formattazione del testo
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error('Something went wrong'); // Corretta la formattazione del testo
+    }
   };
   return (
     <Box p="3" maxW="lg" mx="auto">
