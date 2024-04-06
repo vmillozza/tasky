@@ -1,47 +1,68 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import {connectToDatabase} from '../libraries/dbConnect.js'; // Correzione del percorso
-
-// Nota: spostare la logica di inizializzazione della collezione all'interno della funzione potrebbe essere una pratica migliore
-// per evitare errori dovuti al tentativo di accedere a `db` prima che la connessione sia effettivamente stabilita.
+import { connectToDatabase } from '../libraries/dbConnect.js'; // Percorso corretto
+import { logToFile } from '../libraries/logFile.js';
 
 export const signup = async (req, res, next) => {
   try {
     const { username, email, password } = req.body;
-    const collection = await db.collection('users'); // Spostato qui per assicurarsi che db sia pronto
-    const query = {
+    logToFile("req.body=>" + req.body);
+    // Log della password (assicurati di rimuoverlo o di usare un livello di log appropriato in produzione)
+    logToFile("password=>" + password);
+
+    if (!password || !email || !username) {
+      // Gestisce il caso in cui uno dei campi richiesti manchi
+      return res.status(400).json({ message: 'Username, email, and password are required.' });
+    }
+
+    const db = await connectToDatabase();
+    const collection = db.collection('users'); // Assicura che `db` sia pronto prima di accedere a `collection`
+
+    // Verifica l'esistenza di un utente con la stessa email o username
+    const existingUser = await collection.findOne({
       $or: [{ email }, { username }],
-    };
-    const existingUser = await collection.findOne(query);
+    });
+
     if (existingUser) {
-      return next({
-        status: 422,
+      return res.status(422).json({
         message: 'Email or Username is already registered.',
       });
     }
+
+    // Hash della password
     const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Crea l'oggetto utente
     const user = {
       username,
       email,
       password: hashedPassword,
-      avatar: 'https://g.codewithnathan.com/default-user.png', // Assicurati che l'URL sia corretto e accessibile
+      avatar: 'https://example.com/default-user.png', // URL di un avatar di default (sostituire con un URL appropriato)
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
 
-    // Qui dovresti aggiungere il codice per inserire `user` nel database
-    // Ad esempio: await collection.insertOne(user);
-    const { insertedld} = await collection. insertOne (user);
-    const token = jwt. sign({ id : insertedld }, process.env.AUTH_SECRET);
-    user._id = insertedld;
-    const { password : pass, updatedAt, createdAt, ... rest } = user;
-    // Segue la logica per gestire la risposta positiva, ad esempio inviare indietro l'utente creato (senza password)
-    // Omitting logic for positive response handling, e.g., sending back the created user (without password)
-    res
-    .cookie('taskly_token' , token, { httpOnly: true })
-    .status(200)
-    . json(rest);
+    // Inserisce l'utente nel database
+    const { insertedId } = await collection.insertOne(user);
+
+    // Crea un token JWT
+    const token = jwt.sign({ id: insertedId }, process.env.AUTH_SECRET, { expiresIn: '1d' });
+
+    // Prepara l'utente per la risposta, escludendo i campi sensibili
+    const { password: _, ...userWithoutPassword } = user;
+    userWithoutPassword._id = insertedId;
+
+    // Invia la risposta con il cookie del token e i dati dell'utente
+    return res
+      .cookie('taskly_token', token, { httpOnly: true })
+      .status(201)
+      .json(userWithoutPassword);
   } catch (error) {
-    next({ status: 500, message: error.message }); // Modificato per fornire un messaggio di errore più leggibile
+    // Gestione degli errori
+    logToFile("Signup error: " + error.message); // Considera di loggare l'errore
+    return next({
+      status: 500,
+      message: 'An error occurred during the signup process.',
+    });
   }
 };
