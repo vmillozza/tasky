@@ -25,7 +25,7 @@ export default function SignUp() {
   const doSubmit = async values => {
     try {
       //alert(API_BASE_URL);
-      const res = await fetch(`/auth/signup`, { // Rimossi gli spazi intorno a ${API_BASE_URL}
+      const res = await fetch(`/api/v1/auth/signup`, { // Rimossi gli spazi intorno a ${API_BASE_URL}
         method: 'POST',
         headers: {
           'Content-Type': 'application/json', // Rimosso lo spazio dopo 'application/json'

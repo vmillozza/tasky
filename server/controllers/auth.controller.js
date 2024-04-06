@@ -6,9 +6,9 @@ import { logToFile } from '../libraries/logFile.js';
 export const signup = async (req, res, next) => {
   try {
     const { username, email, password } = req.body;
-    logToFile("req.body=>" + req.body);
+    //logToFile("req.body=>" + req.body);
     // Log della password (assicurati di rimuoverlo o di usare un livello di log appropriato in produzione)
-    logToFile("password=>" + password);
+    //logToFile("password=>" + password);
 
     if (!password || !email || !username) {
       // Gestisce il caso in cui uno dei campi richiesti manchi
