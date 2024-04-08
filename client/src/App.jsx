@@ -7,11 +7,13 @@ import { ChakraProvider } from '@chakra-ui/react'
 import { UserProvider } from './context/UserContext';
 import Profile from './pages/Profile' ;
 import PrivateRoute from './components/PrivateRoute';
+import NavBar from './components/NavBar' ;
 export default function App() {
   return (
     <UserProvider>
       <ChakraProvider>
         <BrowserRouter>
+          <NavBar />
           <Routes>
             <Route path='/' element={<Home />} />
             <Route path='/signin' element={<SignIn />} />
@@ -20,6 +22,7 @@ export default function App() {
               <Route path='/profile' element={<Profile />} />
             </Route>
           </Routes>
+         
         </BrowserRouter>
       </ChakraProvider>
     </UserProvider>
