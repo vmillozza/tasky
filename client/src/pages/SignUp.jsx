@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 //import toast from 'react-hot-toast' ;
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-//import { API_BASE_URL } from '../util.js';
+import { API_BASE_URL } from '../util.js';
 import {
   FormControl,
   Input,
@@ -25,7 +25,7 @@ export default function SignUp() {
   const doSubmit = async values => {
     try {
       //alert(API_BASE_URL);
-      const res = await fetch(`/api/v1/auth/signup`, { // Rimossi gli spazi intorno a ${API_BASE_URL}
+      const res = await fetch(`${API_BASE_URL}auth/signup`, { // Rimossi gli spazi intorno a ${API_BASE_URL}
         method: 'POST',
         headers: {
           'Content-Type': 'application/json', // Rimosso lo spazio dopo 'application/json'
