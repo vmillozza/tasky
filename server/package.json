@@ -24,5 +24,8 @@
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.0",
     "update": "^0.7.4"
+  },
+  "devDependencies": {
+    "http-proxy-middleware": "^3.0.0"
   }
 }

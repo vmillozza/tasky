@@ -6,8 +6,19 @@ import cookieParser from "cookie-parser";
 import swaggerUi from "swagger-ui-express";
 import swaggerSpec from "swagger-jsdoc";
 import cors from "cors";
+import { createProxyMiddleware } from 'http-proxy-middleware';
+import { logToFile } from './libraries/logFile.js';
 
 const app = express();
+// Solo in ambiente di sviluppo, reindirizza le richieste al client React
+if (process.env.NODE_ENV === 'development') {
+  logToFile('development');
+  app.use('/api/v1/', createProxyMiddleware({ 
+      target: 'http://localhost:8000', // Porta su cui gira il server React in sviluppo
+      changeOrigin: true,
+  }));
+}
+
 app.use(express.json());
 app.use(cookieParser());
 app.use(
