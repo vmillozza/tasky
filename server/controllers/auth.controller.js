@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import { connectToDatabase } from '../libraries/dbConnect.js'; // Percorso corretto
 import { logToFile } from '../libraries/logFile.js';
 
+
 export const signup = async (req, res, next) => {
   try {
     const { username, email, password } = req.body;
@@ -64,5 +65,37 @@ export const signup = async (req, res, next) => {
       status: 500,
       message: 'An error occurred during the signup process.',
     });
+    
+  }
+  
+};
+export const signin = async (req, res, next) => {
+  const { email, password } = req.body;
+  try {
+    const validUser = await collection.findOne({ email });
+    if (!validUser) {
+      return next({ status: 404, message: 'User not found!' });
+    }
+    const validPassword = await bcrypt.compare(password, validUser.password);
+    if (!validPassword) {
+      return next({ status: 401, message: 'Wrong password!' });
+    }
+    const token = jwt.sign({ id: validUser._id }, process.env.AUTH_SECRET);
+    const { password: pass, updatedAt, createdAt, ...rest } = validUser;
+    res
+      .cookie('taskly_token', token, { httpOnly: true })
+      .status(200)
+      .json(rest);
+  } catch (error) {
+    next({ status: 500, error });
+  }
+};
+
+export const signOut = async (req, res, next) => {
+  try {
+    res.clearCookie('taskly_token');
+    res.status(200).json({ message: 'Sign out successful' });
+  } catch (error) {
+    next({ status: 500 });
   }
 };
