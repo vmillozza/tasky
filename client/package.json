@@ -9,7 +9,11 @@
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
-  "proxy": "http://localhost:8000",
+  "proxy": {
+    "/api/*": {
+      "target": "http://127.0.0.1:8000"
+    }
+  },
   "dependencies": {
     "@chakra-ui/react": "^2.8.2",
     "@emotion/react": "^11.11.4",

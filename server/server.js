@@ -14,7 +14,7 @@ const app = express();
 if (process.env.NODE_ENV === 'development') {
   logToFile('development');
   app.use('/api/v1/', createProxyMiddleware({ 
-      target: 'http://localhost:8000', // Porta su cui gira il server React in sviluppo
+      target: 'http://127.0.0.1:8000', // Porta su cui gira il server React in sviluppo
       changeOrigin: true,
   }));
 }

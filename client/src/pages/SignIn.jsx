@@ -27,7 +27,16 @@ export default function SignIn() {
 
   const doSubmit = async values => {
     try {
-      const res = await fetch(`${API_BASE_URL}/auth/signin`, {
+      //const currentPort = window.location.port;
+      let url = `${API_BASE_URL}/auth/signin`;
+      //url = 'http://127.0.0.1:8000'+url;
+      const currentPort = window.location.port;
+      const hostWithPort = window.location.host;
+      console.log('currentPort:'+ currentPort);
+      console.log('hostWithPort:'+ hostWithPort.replace(currentPort,'8000'));
+      //url = hostWithPort.replace(currentPort,'8000')+url;
+      console.log('url:'+ url);
+      const res = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
